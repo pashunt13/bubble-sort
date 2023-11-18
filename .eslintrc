@@ -13,3 +13,9 @@
     "no-multi-spaces": ["error"]
   }
 }
+
+// {
+//   "semi": true,
+//   "singleQuote": true,
+//   "trailingComma": "none"
+// }
