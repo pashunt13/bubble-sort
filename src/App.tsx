@@ -1,22 +1,23 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
+import Controller from './components/Controller';
+import Items from './components/Items';
 
 function App() {
-  const amountRef = useRef<HTMLInputElement>(null);
-  const speedRef = useRef<HTMLInputElement>(null);
+  const [amount, setAmount] = useState(100);
+  const [speed, setSpeed] = useState(1);
+  const [isSorting, setIsSorting] = useState(false);
 
-  const [items, setItems] = useState<number[]>(Array.from(Array(100).keys()));
+  const [items, setItems] = useState(Array.from(Array(100).keys()));
   const [currentIndex, setCurrentIndex] = useState<number>(-2);
 
-  function shuffle() {
-    const amount = Number(amountRef.current?.value);
+  const shuffle = useCallback(() => {
     const array = Array.from(Array(amount).keys());
     array.sort(() => Math.random() - 0.5);
     setItems([...array]);
-  }
+  }, [amount]);
 
-  async function sort() {
-    const speed = Number(speedRef.current?.value);
+  const sort = async () => {
     const array = [...items];
 
     for (let i = 0; i < array.length; i++) {
@@ -31,28 +32,27 @@ function App() {
         }
       }
     }
-  }
+  };
+
+  useEffect(() => {
+    if (!isSorting) return;
+    sort();
+    setIsSorting(false);
+  }, [sort, isSorting]);
+
+  const handleSort = useCallback(() => {
+    setIsSorting(true);
+  }, []);
   
   return (
     <div className='App'>
-      <div className='controller-container'>
-        <input ref={amountRef} type='text' placeholder='Amount' />
-        <input ref={speedRef} type='text' placeholder='Speed (ms)' />
-        <button onClick={shuffle}>Shuffle</button>
-        <button onClick={sort}>Sort</button>
-      </div>
-
-      <ul className='items-container'>
-        {items.map((item, index) => {
-          return (
-            <li 
-              className={(currentIndex === index || currentIndex + 1 === index) ? 'item active' : 'item'}
-              key={`item-${item}`}
-              style={{ height: (item + 1) * 5}}>
-            </li>
-          );
-        })}
-      </ul>
+      <Controller 
+        onAmountChange={setAmount} 
+        onSpeedChange={setSpeed}
+        onShuffle={shuffle} 
+        onSort={handleSort} 
+      />
+      <Items items={items} currentIndex={currentIndex} />
     </div>
   );
 }
