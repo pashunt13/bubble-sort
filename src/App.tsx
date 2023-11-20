@@ -7,9 +7,8 @@ function App() {
   const [amount, setAmount] = useState(100);
   const [speed, setSpeed] = useState(1);
   const [isSorting, setIsSorting] = useState(false);
-
   const [items, setItems] = useState(Array.from(Array(100).keys()));
-  const [currentIndex, setCurrentIndex] = useState<number>(-2);
+  const [currentIndex, setCurrentIndex] = useState(-2);
 
   const shuffle = useCallback(() => {
     const array = Array.from(Array(amount).keys());
@@ -19,7 +18,6 @@ function App() {
 
   const sort = async () => {
     const array = [...items];
-
     for (let i = 0; i < array.length; i++) {
       for (let j = 0; j < array.length; j++) {
         setCurrentIndex(j);
@@ -28,7 +26,7 @@ function App() {
           array[j] = array[j + 1];
           array[j + 1] = tmp;
           setItems([...array]);
-          await new Promise(resolve => setTimeout(resolve, speed));
+          await new Promise((resolve) => setTimeout(resolve, speed));
         }
       }
     }
@@ -43,14 +41,14 @@ function App() {
   const handleSort = useCallback(() => {
     setIsSorting(true);
   }, []);
-  
+
   return (
-    <div className='App'>
-      <Controller 
-        onAmountChange={setAmount} 
+    <div className="App">
+      <Controller
+        onAmountChange={setAmount}
         onSpeedChange={setSpeed}
-        onShuffle={shuffle} 
-        onSort={handleSort} 
+        onShuffle={shuffle}
+        onSort={handleSort}
       />
       <Items items={items} currentIndex={currentIndex} />
     </div>
